@@ -1,5 +1,7 @@
 import customtkinter as ctk
 from CTkTable import *
+from Database.database import insertAbsence ,getModules
+
 
 class MainWindow(ctk.CTk ): 
     global tree #no need
@@ -18,9 +20,10 @@ class MainWindow(ctk.CTk ):
 
         self.label1 = ctk.CTkLabel(self.frame1, text="Séléctionner le module enseigné : ", font=my_font)
         self.label1.pack(pady=40)
-
-        self.optionmenu=ctk.CTkOptionMenu(self.frame1,values=['Python pour AI','Traitement d\'image','JEE','Anglais','Français'] , width=260,font=my_font)
-        # self.optionmenu.get()
+        self.modules=getModules()
+        module_names = [module[1] for module in self.modules]
+        self.optionmenu=ctk.CTkOptionMenu(self.frame1,values=module_names , width=260,font=my_font)
+        self.optionmenu.get()
         self.optionmenu.pack(pady=30)
 
         self.inputEmail = ctk.CTkEntry(self.frame1,placeholder_text="Entrez votre adresse mail", width=300)
@@ -51,7 +54,7 @@ class MainWindow(ctk.CTk ):
        
     
         # Create Button to switch to Page 1
-        self.btn_close = ctk.CTkButton(self.frame2, text="Fermer et Envoyer", command=self.switch_to_page1, font=my_font)
+        self.btn_close = ctk.CTkButton(self.frame2, text="Fermer et Envoyer", command=self.close_window, font=my_font)
         self.btn_close.pack(pady=10)
 
         # Initially show Page 1
@@ -66,8 +69,18 @@ class MainWindow(ctk.CTk ):
         self.frame1.pack(fill ="both" ,expand=True)
         self.frame2.pack_forget()
 
-    def switch_to_page1(self):
-        self.show_page1()
+
+    def close_window(self):
+        module_name=self.optionmenu.get()
+        for module in  self.modules:
+            if module[1] == module_name:  # Check if the module name matches
+             module_id = module[0]
+        self.btn_close.configure(text="Wait" , state = "disabled")
+        insertAbsence(self.students , module_id)
+        self.btn_close.configure(text="Done " , state = "disabled")
+
+        #self.destroy()
+        #self.show_page1()
 
     def switch_to_page2(self):
         # Show Frame 2 and hide Frame 1
@@ -79,9 +92,9 @@ class MainWindow(ctk.CTk ):
 
       
 
-def _update_students_gui(students,i):
+def _update_students_gui(students):
        #my_table.delete_row(index=i)
-       my_table.update_values(values=students)
+    my_table.update_values(values=students)
         
     
 def create_main_window(students):

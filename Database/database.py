@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 import cx_Oracle
 
 # database connection
@@ -19,15 +19,25 @@ def connect() :
 
 # Close cursor and connection
 
-def desconnect(cursor,connection) :
+def disconnect(cursor , connection) :
     cursor.close()
     connection.close()
+   
+def insertAbsence(students, module_id):
+    cursor , connection = connect()
+    for student in students:
+        name, status = student
+        if status == "Absent":
+            print("Student",name,"is absent")
+            current_datetime = datetime.now().strftime('%d-%b-%y')  # Format the date
+            cursor.execute("INSERT INTO Absence (cne, id_mod, date_abs) VALUES (:1, :2, TO_DATE(:3, 'DD-MON-YY'))",
+                           (name, module_id, current_datetime))
+            connection.commit()
+            print("Data Inserted")
+    disconnect(cursor, connection)
 
-def insertAbsence( cursor, connection , students) :
-    
-   for i,student in students :
-        if student[i][1]==False :
-             cursor.execute("INSERT INTO Absence VALUES (:1, :2)", (student[0], "Module122") ,date.now())
-             connection.commit()
-             
-   desconnect(cursor,connection)
+def getModules():
+    cursor , connection = connect()
+    cursor.execute("SELECT * FROM Module")
+    modules = cursor.fetchall()
+    return modules

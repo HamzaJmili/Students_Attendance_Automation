@@ -34,7 +34,7 @@ def recognize_faces(frame, known_face_encodings, students):
                 
                 if students[i][1]== "Absent" :
                      students[i] = (name, "Present")
-                     gui._update_students_gui(students,i)
+                     gui._update_students_gui(students)
                  
                 break
                 

@@ -4,7 +4,7 @@ import face_rec.face_rec_func as frf
 
 def main():
 
-    students_dir = r"C:\Users\pro\Desktop\py_faceEnv\App\students_images"
+    students_dir = r"students_images\\"
     known_face_encodings, students = frf.load_known_faces(students_dir)
 
     # Create the main window in the main thread

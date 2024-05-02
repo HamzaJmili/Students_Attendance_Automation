@@ -5,9 +5,11 @@ create table Etudiant (
     Prenom varchar(40) NOT NULL ,
     Email varchar(50) NOT NULL ) ;
 
+
 create table Module ( 
     id_mod int PRIMARY KEY , 
     Nom_mod varchar(50) NOT NULL);
+
 
 create table Absence (
     cne varchar(10) ,
