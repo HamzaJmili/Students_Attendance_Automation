@@ -1,11 +1,13 @@
 import threading
 import GUI.gui as gui
 import face_rec.face_rec_func as frf
+from Utility.database import getStudents
 
 def main():
 
+    students = getStudents()
     students_dir = r"students_images\\"
-    known_face_encodings, students = frf.load_known_faces(students_dir)
+    known_face_encodings = frf.load_known_faces(students_dir)
 
     # Create the main window in the main thread
     gui_thread = threading.Thread(target=gui.create_main_window, args=(students,))

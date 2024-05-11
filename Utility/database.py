@@ -26,12 +26,12 @@ def disconnect(cursor , connection) :
 def insertAbsence(students, module_id):
     cursor , connection = connect()
     for student in students:
-        name, status = student
+        cne, _, _, _, status = student
         if status == "Absent":
-            print("Student",name,"is absent")
+            print("Student",cne,"is absent")
             current_datetime = datetime.now().strftime('%d-%b-%y')  # Format the date
             cursor.execute("INSERT INTO Absence (cne, id_mod, date_abs) VALUES (:1, :2, TO_DATE(:3, 'DD-MON-YY'))",
-                           (name, module_id, current_datetime))
+                           (cne, module_id, current_datetime))
             connection.commit()
             print("Data Inserted")
     disconnect(cursor, connection)
@@ -41,3 +41,19 @@ def getModules():
     cursor.execute("SELECT * FROM Module")
     modules = cursor.fetchall()
     return modules
+
+def getStudents(): 
+    cursor , connection = connect()
+    cursor.execute("SELECT * FROM Etudiant")
+    students = cursor.fetchall()
+    #Ajouter a chaque etudiant colonne absent 
+    students_with_status = []
+
+    for tuple_donnees in students:
+   
+        tuple_avec_age = tuple_donnees + ("Absent",) 
+
+        students_with_status.append(tuple_avec_age)
+    return students_with_status
+
+

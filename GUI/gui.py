@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from CTkTable import *
-from Database.database import insertAbsence ,getModules
+from Utility.database import insertAbsence ,getModules
+from Utility.saveSendExcel import create_excel_file
 
 
 class MainWindow(ctk.CTk ): 
@@ -15,6 +16,7 @@ class MainWindow(ctk.CTk ):
         ctk.set_default_color_theme('green')
         my_font= ctk.CTkFont(family="Calibri" , weight="bold" ,size=15) 
         self.students=students
+        studentss = [(t[0], t[1], t[2], t[4]) for t in students]
         self.frame1 = ctk.CTkFrame(master=self)
         self.frame1.pack( fill ="both" ,expand=True)
 
@@ -29,8 +31,8 @@ class MainWindow(ctk.CTk ):
         self.inputEmail = ctk.CTkEntry(self.frame1,placeholder_text="Entrez votre adresse mail", width=300)
         self.inputEmail.pack(pady=30)
 
-        checkbox_2 = ctk.CTkCheckBox(self.frame1, text="Envoyer moi feuille d'absence : fichier Excel sur l'addresse mail ", font=my_font)
-        checkbox_2.pack(pady=30)
+        self.checkbox = ctk.CTkCheckBox(self.frame1, text="Envoyer moi feuille d'absence : fichier Excel sur l'addresse mail ", font=my_font)
+        self.checkbox.pack(pady=30)
 
 
         # Create Button to switch to Page 2
@@ -45,9 +47,8 @@ class MainWindow(ctk.CTk ):
         self.label2.pack(pady=40)
 
 
-        studentstest = [("Alice", True),("Bob", False),("Charlie", True),("David", False),("Eve", True)]
         global my_table
-        my_table = CTkTable(self.frame2, values=students , width=220) 
+        my_table = CTkTable(self.frame2, values=studentss , width=220) 
        
         my_table.pack(pady=10)
         # https://pypi.org/project/CTkTable/
@@ -74,9 +75,12 @@ class MainWindow(ctk.CTk ):
         module_name=self.optionmenu.get()
         for module in  self.modules:
             if module[1] == module_name:  # Check if the module name matches
-             module_id = module[0]
+                module_id = module[0]
         self.btn_close.configure(text="Wait" , state = "disabled")
+        if(self.checkbox.get()==1) :
+            create_excel_file(self.students)
         insertAbsence(self.students , module_id)
+        
         self.btn_close.configure(text="Done " , state = "disabled")
 
         #self.destroy()
@@ -86,6 +90,8 @@ class MainWindow(ctk.CTk ):
         # Show Frame 2 and hide Frame 1
         self.frame2.pack(fill ="both" ,expand=True)
         self.frame1.pack_forget()
+        
+    
 
 
         
@@ -94,7 +100,9 @@ class MainWindow(ctk.CTk ):
 
 def _update_students_gui(students):
        #my_table.delete_row(index=i)
-    my_table.update_values(values=students)
+    studentss = [(t[0], t[1], t[2], t[4]) for t in students]
+
+    my_table.update_values(values=studentss)
         
     
 def create_main_window(students):
