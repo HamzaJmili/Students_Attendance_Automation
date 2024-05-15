@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from CTkTable import *
 from Utility.database import insertAbsence ,getModules
-from Utility.saveSendExcel import create_excel_file
+from Utility.saveSendExcel import create_excel_file , send_email_with_excel
+
 
 
 class MainWindow(ctk.CTk ): 
@@ -13,7 +14,9 @@ class MainWindow(ctk.CTk ):
         self.geometry("900x600")
         #self.iconbitmap(r"assets\icons\faceIA.ico")
         ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme('green')
+        ctk.set_default_color_theme("green")
+        #ctk.set_default_color_theme("./GUI/assets/themes/yellow.json")
+        
         my_font= ctk.CTkFont(family="Calibri" , weight="bold" ,size=15) 
         self.students=students
         studentss = [(t[0], t[1], t[2], t[4]) for t in students]
@@ -78,7 +81,10 @@ class MainWindow(ctk.CTk ):
                 module_id = module[0]
         self.btn_close.configure(text="Wait" , state = "disabled")
         if(self.checkbox.get()==1) :
-            create_excel_file(self.students)
+            file_name=create_excel_file(self.students)
+            email=self.inputEmail.get()
+            send_email_with_excel(email,file_name)
+            
         insertAbsence(self.students , module_id)
         
         self.btn_close.configure(text="Done " , state = "disabled")
@@ -91,12 +97,6 @@ class MainWindow(ctk.CTk ):
         self.frame2.pack(fill ="both" ,expand=True)
         self.frame1.pack_forget()
         
-    
-
-
-        
-
-      
 
 def _update_students_gui(students):
        #my_table.delete_row(index=i)
@@ -104,9 +104,6 @@ def _update_students_gui(students):
 
     my_table.update_values(values=studentss)
         
-    
 def create_main_window(students):
     window = MainWindow(students)
     window.mainloop()
-
-

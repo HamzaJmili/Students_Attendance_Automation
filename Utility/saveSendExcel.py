@@ -1,3 +1,7 @@
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 import xlsxwriter
 from datetime import datetime
 
@@ -6,6 +10,7 @@ def create_excel_file(students):
     title = "Absence " + datetime.now().strftime('%d-%m-%Y')
     
     workbook = xlsxwriter.Workbook(title+'.xlsx')
+    file_name =title+'.xlsx'
     
     # Ajouter une feuille de calcul
     worksheet = workbook.add_worksheet()
@@ -39,5 +44,41 @@ def create_excel_file(students):
     
     # Fermer le fichier Excel
     workbook.close()
+    return file_name
+
+
+
+def send_email_with_excel(receiver_email, attachment_path):
+    # Paramètres de connexion au serveur SMTP Gmail
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587  # Port SMTP pour Gmail (TLS)
+    smtp_username = 'your email address'
+    smtp_password='your password'
+ 
+      # Votre mot de passe Gmail
+    
+    # Créer un objet MIMEMultipart
+    msg = MIMEMultipart()
+    
+    # Définir les détails de l'email
+    msg['From'] = smtp_username
+    msg['To'] = receiver_email
+    msg['Subject'] = "Absence Report " + datetime.now().strftime('%d-%m-%Y')  # Sujet avec la date actuelle
+    
+    # Attacher le fichier Excel à l'email
+    with open(attachment_path, 'rb') as attachment:
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename=students.xlsx')
+        msg.attach(part)
+    
+    # Connexion et envoi de l'email via le serveur SMTP Gmail
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()  # Activer le mode TLS
+        server.login(smtp_username, smtp_password)  # Connexion au serveur SMTP Gmail
+        server.sendmail(smtp_username, receiver_email, msg.as_string())  # Envoi de l'email
+        print("Email sent successfully")
+
 
 
