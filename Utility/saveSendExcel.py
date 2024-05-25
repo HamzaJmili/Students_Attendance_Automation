@@ -37,6 +37,7 @@ def create_excel_file(students):
     # Écrire les informations des étudiants
     for row, student in enumerate(students, start=3):
         for col, value in enumerate(student):
+            
             if col == 4 and value == "Absent":
                 worksheet.write(row, col, value, absent_format)  # Appliquer le style si la colonne est "Status" et la valeur est "Absent"
             else:
@@ -52,8 +53,8 @@ def send_email_with_excel(receiver_email, attachment_path):
     # Paramètres de connexion au serveur SMTP Gmail
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587  # Port SMTP pour Gmail (TLS)
-    smtp_username = 'your email address'
-    smtp_password='your password'
+    smtp_username = 'umi.fsm.noreply@gmail.com'
+    smtp_password='wpnk mufk twze mach'
  
       # Votre mot de passe Gmail
     

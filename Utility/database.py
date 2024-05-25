@@ -36,9 +36,10 @@ def insertAbsence(students, module_id):
             print("Data Inserted")
     disconnect(cursor, connection)
 
-def getModules():
+def getModules(id_prof):
     cursor , connection = connect()
-    cursor.execute("SELECT * FROM Module")
+    query="SELECT * FROM Module where id_prof=:id_prof"
+    cursor.execute(query,id_prof=id_prof)
     modules = cursor.fetchall()
     return modules
 
@@ -56,4 +57,37 @@ def getStudents():
         students_with_status.append(tuple_avec_age)
     return students_with_status
 
+
+def verify_login(email, password):
+     cursor, connection = connect()
+     query = "SELECT id_prof, nom, prenom, email FROM Professeur WHERE email = :email AND password = :password"
+     cursor.execute(query, email=email, password=password)    
+     prof = cursor.fetchone()
+     if prof : 
+      return prof[0] 
+     else : 
+         return None
+
+
+def get_students_and_filiere_name(module_name, prof_id):
+    cursor, connection = connect()
+
+    cursor.execute("SELECT id_fil FROM Module  WHERE Nom_mod = :module_name AND id_prof = :prof_id", module_name=module_name, prof_id=prof_id)
+    result = cursor.fetchone()
+
+    if result is None:
+        return None 
+
+    id_fil = result[0]
+
+    cursor.execute("SELECT e.cne, e.nom, e.prenom, e.email FROM Etudiant e WHERE e.id_fil = :id_fil ", id_fil=id_fil)
+    students = cursor.fetchall()
+
+    cursor.execute(" SELECT nom_fil FROM Filiere WHERE id_fil = :id_fil ", id_fil=id_fil)
+    filiere_result = cursor.fetchone()
+    filiere_name = filiere_result[0] if filiere_result else None
+
+    students_with_status = [(s[0], s[1], s[2], s[3], 'Absent') for s in students]
+
+    return students_with_status, filiere_name
 
