@@ -53,8 +53,8 @@ def send_email_with_excel(receiver_email, attachment_path):
     # Paramètres de connexion au serveur SMTP Gmail
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587  # Port SMTP pour Gmail (TLS)
-    smtp_username = 'umi.fsm.noreply@gmail.com'
-    smtp_password='wpnk mufk twze mach'
+    smtp_username = 'email'
+    smtp_password='password'
  
       # Votre mot de passe Gmail
     
